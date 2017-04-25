@@ -21,7 +21,7 @@
             }
         },
         created() {
-            this.initTotalTime()
+            // this.initTotalTime()
         },
         methods: {
             initTotalTime() {

@@ -31,8 +31,7 @@
         />
       </div>
     </div>
-    <button class="btn btn-primary" @click="edit()">保存</button>
-    <button class="btn btn-primary" @click="save()">增加</button>
+    <button class="btn btn-primary" @click="save()">保存</button>
     <router-link to="/time-entries" class="btn btn-danger">取消</router-link>
     <hr>
   </div>
@@ -68,24 +67,17 @@
                     comment: this.comment
                 }
 
-                this.$store.dispatch('savePlan', plan)
-                this.$store.dispatch('addTotalTime', this.totalTime)
-                this.$router.go(-1)
-            },
-            edit() {
-                const plan = {
-                    date: this.date,
-                    totalTime: this.totalTime,
-                    comment: this.comment
+                if (this.$route.path !== '/time-entries/log-time') {
+                    const pId = this.$route.params.id
+                    const pTotalTime = this.$store.state.plans[pId].totalTime
+                    this.$store.dispatch('subtractTotalTime', pTotalTime)
+                    this.$store.dispatch('editPlan', {
+                        pId,
+                        plan
+                    })
+                } else {
+                    this.$store.dispatch('savePlan', plan)
                 }
-
-                let pId = this.$route.params.id
-
-                this.$store.dispatch('subtractTotalTime', this.$store.plans[pId].totalTime)
-                this.$store.dispatch('editPlan', {
-                    pId,
-                    plan
-                })
                 this.$store.dispatch('addTotalTime', this.totalTime)
                 this.$router.go(-1)
             }
