@@ -1,0 +1,97 @@
+<template>
+    <div class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-6">
+        <label>日期</label>
+        <input
+          type="date"
+          class="form-control"
+          v-model="date"
+          placeholder="Date"
+        />
+      </div>
+      <div class="col-sm-6">
+        <label>时间</label>
+        <input
+          type="number"
+          class="form-control"
+          v-model="totalTime"
+          placeholder="Hours"
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label>备注</label>
+        <input
+          type="text"
+          class="form-control"
+          v-model="comment"
+          placeholder="Comment"
+        />
+      </div>
+    </div>
+    <button class="btn btn-primary" @click="edit()">保存</button>
+    <button class="btn btn-primary" @click="save()">增加</button>
+    <router-link to="/time-entries" class="btn btn-danger">取消</router-link>
+    <hr>
+  </div>
+</template>
+
+<script>
+    export default {
+        name: 'LogTime',
+        data() {
+            return {
+                date: '',
+                totalTime: '',
+                comment: ''
+            }
+        },
+        created() {
+            this.initLogTime()
+        },
+        watch: {
+            '$route': 'initLogTime'
+        },
+        methods: {
+            initLogTime() {
+                let planId = this.$route.params.id
+                let editList = this.$store.state.plans[planId]
+                Object.assign(this.$data, editList)
+
+            },
+            save() {
+                const plan = {
+                    date: this.date,
+                    totalTime: this.totalTime,
+                    comment: this.comment
+                }
+
+                this.$store.dispatch('savePlan', plan)
+                this.$store.dispatch('addTotalTime', this.totalTime)
+                this.$router.go(-1)
+            },
+            edit() {
+                const plan = {
+                    date: this.date,
+                    totalTime: this.totalTime,
+                    comment: this.comment
+                }
+
+                let pId = this.$route.params.id
+
+                this.$store.dispatch('subtractTotalTime', this.$store.plans[pId].totalTime)
+                this.$store.dispatch('editPlan', {
+                    pId,
+                    plan
+                })
+                this.$store.dispatch('addTotalTime', this.totalTime)
+                this.$router.go(-1)
+            }
+        }
+    }
+</script>
+<style>
+
+</style>
